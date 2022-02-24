@@ -10,42 +10,41 @@ import Web3 from "web3";
 import Icon from "./icons/Icons";
 import Image from "next/image";
 import coinb from './../public/assets/coinbase1.svg'
+import { useContext } from 'react';
+import { DataContext } from "../context/Context";
 
 // (typeof window.ethereum !== 'undefined')
 
 
-const WalletModal = ({showWalletModal, setShowWalletModal, isConnecting, setIsConnecting, setIsConnected,         isConnected, setWeb3Account, setChainId }: {
-	showWalletModal: boolean,
-	setShowWalletModal: any,
-	isConnecting: boolean,
-	setIsConnecting: any,
-	setIsConnected: any,
-	isConnected: boolean,
-	setWeb3Account: any,
-	setChainId: any
-}) => {
+
+const WalletModal = () => {
   	const [ web3Library, setWeb3Library ] = React.useState<any>();
+
+	const [provider, setProvider] = React.useState(undefined);
+
+	const [web3Provider, setWeb3Provider] = React.useState();
 
 	const [ walletlinkProvider, setWalletlinkProvider ] = React.useState();
 
 	const [ walletConnectProvider, setWalletConnectProvider ] = React.useState();
-	
-	// const [isChainId, setChainId] = React.useState(undefined as any);
  
 	const ref= useRef<HTMLDivElement | null >(null);
 
+	const {showWalletModal, setShowWalletModal, isConnecting, setIsConnecting, setIsConnected, isConnected, setWeb3Account, web3Account, setChainId, NETWORKS} = useContext(DataContext)
 
-  const NETWORKS : any = {
-    1: "Ethereum Main Network",
-    3: "Ropsten Test Network",
-    4: "Rinkeby Test Network",
-    5: "Goerli Test Network",
-    42: "Kovan Test Network",
-    1337: "Private Network",
-  };
+
+//   const NETWORKS : any = {
+//     1: "Ethereum Main Network",
+//     3: "Ropsten Test Network",
+//     4: "Rinkeby Test Network",
+//     5: "Goerli Test Network",
+//     42: "Kovan Test Network",
+//     1337: "Private Network",
+//   };
 
   React.useEffect(() => {
     const checkIfClickedOutside = (e: any) => {
+
       // If the menu is open and the clicked target is not within the menu,
       if (showWalletModal && ref.current && !ref.current.contains(e.target)) {
         setShowWalletModal(!showWalletModal);
@@ -59,15 +58,43 @@ const WalletModal = ({showWalletModal, setShowWalletModal, isConnecting, setIsCo
     };
   }, []);
 
+//     // Detect Provider
+// 	const detectProvider = () => {
+// 		let provider;
+// 		if (window.ethereum) {
+// 		  // Modern DApp browsers
+// 		  provider = window.ethereum;
+// 		} else if (window.web3) {
+// 		  // Legacy dapp browsers
+// 		  provider = window.web3.currentProvider;
+// 		} else {
+// 		  // Non-dapp browsers
+// 		  console.warn("No Ethereum browser detected! Check out MetaMask");
+// 		}
+// 		return provider;
+// 	  };
+
+//   React.useEffect(() => {
+// 	setProvider(detectProvider());
+//   }, []);
+
 
 
 // vanilla metamask
 	const connectMetamask = async () => {
 
 		const provider: any = await detectEthereumProvider();
+		setWeb3Provider(provider);
+
 		if (provider) {
 			try {
 				const accounts: string[] = await provider.request({ method: 'eth_requestAccounts' });
+
+				if (accounts.length === 0) {
+					console.log("Please connect to MetaMask!");
+				  } else if (accounts[0] !== web3Account) {
+					setWeb3Account(accounts[0])
+				  }
 				const account = accounts[0];
 				console.log(account);
 				setWeb3Account(account);
@@ -76,26 +103,28 @@ const WalletModal = ({showWalletModal, setShowWalletModal, isConnecting, setIsCo
 
 				const parseChainId = (chainId: string) : number => {
 					return NETWORKS[Number.parseInt(chainId, 16)]
-				  }
+				}
 
 				setChainId(parseChainId(chainId));
 
 				setIsConnected(!isConnected);
+				setShowWalletModal(false);
 				const library = new Web3Provider(provider, 'any');
 				console.log('library');
 				console.log(library);
 				console.log(chainId);
-				// console.log(isChainId);
 				setWeb3Library(library);
-			
+				console.log("connected");
 			} catch (ex) {
 				console.log(ex);
 			}
 		} else {
-		  console.log ("Please install Metamsk");
+		  console.log ("What's wrong?");
 		}
 			
 	 };
+
+
 
 	// vanilla walletconnect
 	const connectWalletConnect = async () => {
@@ -135,7 +164,12 @@ const WalletModal = ({showWalletModal, setShowWalletModal, isConnecting, setIsCo
 			const accounts: string[] = await web3.eth.getAccounts();
 			const account : string = accounts[0];
 
-			const chainId = await web3.eth.getChainId();
+			const chainId: any = await web3.eth.getChainId();
+
+			const parseChainId = (chainId: string) : number => {
+				return NETWORKS[Number.parseInt(chainId, 16)]
+			  }
+			setChainId(parseChainId(chainId));
 
 			const library = new Web3Provider(provider, 'any');
 
@@ -143,6 +177,9 @@ const WalletModal = ({showWalletModal, setShowWalletModal, isConnecting, setIsCo
 			console.log(library);
 			setWeb3Library(library);
 			setWeb3Account(account);
+			setIsConnected(!isConnected);
+			console.log("connected");
+			setShowWalletModal(!showWalletModal);
 		} catch (ex) {
 			console.log(ex);
 		}
@@ -224,23 +261,41 @@ const WalletModal = ({showWalletModal, setShowWalletModal, isConnecting, setIsCo
 			const accounts: string[] = await provider.request({
 				method: 'eth_requestAccounts'
 			});
+
+			const chainId: string = await provider.request({ method: 'eth_chainId'});
+
 			const account = accounts[0];
 
 			const library = new Web3Provider(provider, 'any');
 
+			const parseChainId = (chainId: string) : number => {
+				return NETWORKS[Number.parseInt(chainId, 16)]
+			}
+
 			console.log('library');
 			console.log(library);
 			setWeb3Library(library);
+			setIsConnected(!isConnected);
+			console.log("connected");
+			setShowWalletModal(!showWalletModal);
 			setWeb3Account(account);
+			setChainId(parseChainId(chainId));
+
 		} catch (ex) {
 			console.log(ex);
 		}
 	};
 
+	// const disconnectMetamask = () => {
+	// 	web3Provider.disconnect();
+	// 	setWeb3Provider(null);
+	// }
+
 	// const disconnectCoinbase = () => {
 	// 	walletlinkProvider.close();
 	// 	setWalletlinkProvider(null);
 	// };
+
 	// const disconnectWalletconnect = ()=>{
 	// 	walletConnectProvider.disconnect()
 	// 	setWalletConnectProvider(null);

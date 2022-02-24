@@ -1,15 +1,14 @@
-import React from 'react'
+import React, { useContext }  from 'react'
 import Image from 'next/image'
 import LogoDAPP from "./../public/assets/Dapp.svg"
+import { DataContext } from '../context/Context';
 
 
-const NavBar = ({web3Account, isChainId, isConnected}: {
-  web3Account: string;
-  isChainId: number | string;
-  isConnected: boolean
-}) => {
+const NavBar = () => {
 
-  
+
+const {web3Account, isChainId, isConnected} = useContext(DataContext);
+
   return (
       <div className="nav-links flex bg-orange-100 px-6 justify-between	items-center">
         <div className='border-2	border-red-300 rounded'>

@@ -9,11 +9,8 @@ import { DataContext } from "../context/Context";
 
 
 const Login = ()  => {
- 
   const [provider, setProvider] = React.useState<any>();
-
   const [isMetaMaskInstalled, setIsMetaMaskInstalled] = React.useState(false);
-
   const [web3, setWeb3] = React.useState<any>();
  
 
@@ -21,27 +18,20 @@ const Login = ()  => {
     setShowWalletModal(!showWalletModal);
   };
 
-  const {setIsConnected, isConnected, setWeb3Account, web3Account, setChainId, isConnecting, setIsConnecting, showWalletModal, setShowWalletModal } = useContext(DataContext)
+  const {setIsConnected, isConnected, setWeb3Account, web3Account, setChainId, isConnecting, setIsConnecting, showWalletModal, setShowWalletModal, onLogin } = useContext(DataContext)
 
   // React.useEffect(() => {
   //   setProvider(detectProvider());
   // }, []);
 
-  // React.useEffect(() => {
-  //   const provider = detectProvider();
-  //   if (provider) {
-  //     if (provider !== window.ethereum) {
-  //       console.error(
-  //         "Not window.ethereum provider.  Do you have multiple wallets installed ?"
-  //       );
-  //     }
-  //     setIsMetaMaskInstalled(true);
-  //   }
+  // React. useEffect(() => {
+  //   const provider = await detectEthereumProvider();
+  //   setProvider(provider);
   // }, []);
 
-
+// 
   React.useEffect(() => {
-    const onLoginHandler = async () => {
+    const onLoginProviderCheck = async () => {
       const provider = await detectEthereumProvider();
     
       if (provider) {
@@ -51,22 +41,40 @@ const Login = ()  => {
           console.error(
             "Not window.ethereum provider.  Do you have multiple wallets installed ?"
           );
+          alert(
+            "Not window.ethereum provider.  Do you have multiple wallets installed ?"
+          );
         }
-        // onLogin(provider);
+  
         setIsMetaMaskInstalled(true);
       } else {
         console.log ("Please install Metamsk");
         setIsMetaMaskInstalled(false);
       }
-  
+    }
+
+    onLoginProviderCheck();
       // setIsConnecting(true);
       // setIsConnecting(false);
-    };
-    onLoginHandler();
-  }, [])
+  }, []);
 
 
-  
+  // const onLoginHandler = async () => {
+  //   const provider: any = await detectEthereumProvider();
+  //   setIsConnecting(true);
+  //   await provider.request({
+  //     method: "eth_requestAccounts",
+  //   });
+  //   setIsConnecting(false);
+  //   onLogin(provider);
+  // }
+
+  // useEffect(() => {
+  //   const onLoginHandler = async () => {
+  //   const provider: any = await detectEthereumProvider();
+  //   }
+  //   onLogin(provider);
+  // }, [])
   // const onLogout = () => {
   //   setIsConnected(false);
   //   // setWeb3Account("");

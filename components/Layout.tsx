@@ -37,7 +37,6 @@ const Layout = ({children}: Props) => {
   const [showalert, setShowAlert] = React.useState(false);
 
 
-
   const NETWORKS : any= {
     1: "Ethereum Main Network",
     3: "Ropsten Test Network",
@@ -64,7 +63,7 @@ const Layout = ({children}: Props) => {
 
     } else if (accounts[0] !== web3Account) {
       setProvider(provider);
-      // setWeb3(web3);
+      setWeb3(web3);
       setChainId(chainId);
       setWeb3Account(accounts[0]);
       
@@ -86,20 +85,20 @@ const Layout = ({children}: Props) => {
     contractAddress
     );
     
-    const balanceofuser = await waveContract.methods
-    .balanceOf(web3Account)
-    .call();
+    // const balanceofuser = await waveContract.methods
+    // .balanceOf(web3Account)
+    // .call();
   
 
-    const accBalanceEth = web3.utils.fromWei(
-       await web3.eth.getBalance(web3Account),
-       "ether"
-     );
+    // const accBalanceEth = web3.utils.fromWei(
+    //    await web3.eth.getBalance(web3Account),
+    //    "ether"
+    //  );
  
-    const balanceofuserinwei = await web3.utils.fromWei(
-      balanceofuser,
-      "ether"
-    );
+    // const balanceofuserinwei = await web3.utils.fromWei(
+    //   balanceofuser,
+    //   "ether"
+    // );
 
     // const getBalance = () => provider.request({
     //   method: 'eth_getBalance',
@@ -110,7 +109,7 @@ const Layout = ({children}: Props) => {
     // console.log(web3.fromWei(x, "ether").toString());
 
   };
-  
+
 
   // interface SwitchEthereumChainParameter {
   //   chainId: string; // A 0x-prefixed hexadecimal string
@@ -146,7 +145,58 @@ const Layout = ({children}: Props) => {
     }
   }
 
+  // React.useEffect(() => {
+  //   onLogin();
+  // }, [])
 
+  React.useEffect(() => {
+  
+    const reLoad = async () => {
+
+        // Check if browser is running Metamask
+        let web3: any;
+        if (window.ethereum) {
+            web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            web3 = new Web3(window.web3.currentProvider);
+        };
+
+        // Check if User is already connected by retrieving the chanId and accounts
+      
+        web3.eth.getAccounts()
+            .then(console.log);
+        // web3.eth.getAccounts()
+        //     .then(async (addr: string) => {
+        //         // Set User account into state
+        //         setWeb3Account(addr);    
+        //     });
+
+        const parseChainId = (chainId: string) : number => {
+					return NETWORKS[Number.parseInt(chainId, 16)]
+				}
+
+       const ntwrkId =  await web3.eth.net.getId()
+        // .then(setChainId); 
+
+        setChainId(parseChainId(ntwrkId));
+
+        web3.eth.getAccounts(function(err: string, accounts: string[]) {
+          if (err != null) console.error("An error ocurred: "+err);
+          else if (accounts.length == 0) console.log("User is not logged in to MetaMask");
+          else {
+            const account = accounts[0];
+				    console.log(account);
+            setIsConnected(true);
+				    setWeb3Account(account);
+            console.log("User is logged in to MetaMask");}
+        })
+      }  
+      reLoad()   
+
+}, []); 
+
+
+// Handle Accounts and ChainId change.
   React.useEffect(() => {
     // you have to write code to detect provider.
     const web3 = new Web3(provider) || new Web3(Web3.givenProvider);
@@ -154,7 +204,6 @@ const Layout = ({children}: Props) => {
     const handleAccountsChanged = async (accounts: Array<string>) => {
 
       accounts = await web3.eth.getAccounts(); 
-
       if (accounts.length === 0) {
         setIsConnected(false);
         window.alert("There is no connected accounts. Please, connect at least 1 account in your wallet.");
@@ -173,10 +222,10 @@ const Layout = ({children}: Props) => {
       const parseChainId = (chainId: any) : string => {
         return NETWORKS[Number.parseInt(chainId, 16)]
       }
-      // window.location.reload();
-      if (parseChainId(web3ChainId) != NETWORKS[1] || NETWORKS[3] || NETWORKS[4] || NETWORKS[5] || NETWORKS[42]) {
+      window.location.reload();
+      if ((parseChainId(web3ChainId)) != NETWORKS[1] || NETWORKS[3] || NETWORKS[4] || NETWORKS[5] || NETWORKS[42]) {
         setNetworkId(networkId);
-        window.alert(`App network (Etheruem) doesn't match to network selected in wallet. Network with id: ${web3NetworkId}`);
+        window.alert(`App network (Etheruem) doesn't match to network selected in wallet. Network with id: ${networkId}`);
         setShowAlert(!showalert);
       }
       setChainId(parseChainId(web3ChainId));
@@ -224,7 +273,7 @@ const Layout = ({children}: Props) => {
   // };
   
 
-  const value = {web3Account, balance, setIsConnected, isConnected, setWeb3Account,setChainId, isChainId, isConnecting, setIsConnecting, showWalletModal, setShowWalletModal, NETWORKS, switchEthereumChain, showalert, web3NetworkId }
+  const value = {web3Account, balance, setIsConnected, isConnected, setWeb3Account,setChainId, isChainId, isConnecting, setIsConnecting, showWalletModal, setShowWalletModal, NETWORKS, switchEthereumChain, showalert, web3NetworkId, onLogin }
 
   return (
     <div className="">

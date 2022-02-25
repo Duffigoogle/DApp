@@ -88,6 +88,8 @@ const WalletModal = () => {
 
 		if (provider) {
 			try {
+				
+				//Get the user's Ethereum accounts
 				const accounts: string[] = await provider.request({ method: 'eth_requestAccounts' });
 
 				if (accounts.length === 0) {
@@ -99,6 +101,8 @@ const WalletModal = () => {
 				console.log(account);
 				setWeb3Account(account);
 
+
+				//Detect which Ethereum network the user is connected to
 				const chainId: string = await provider.request({ method: 'eth_chainId'});
 
 				const parseChainId = (chainId: string) : number => {
@@ -106,6 +110,8 @@ const WalletModal = () => {
 				}
 
 				setChainId(parseChainId(chainId));
+
+
 
 				setIsConnected(!isConnected);
 				setShowWalletModal(false);

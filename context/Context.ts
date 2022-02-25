@@ -16,7 +16,8 @@ interface DataState {
   NETWORKS: any;
   switchEthereumChain: any;
   showalert: boolean;
-  web3NetworkId: number | string
+  web3NetworkId: number | string,
+  onLogin: any
 }
 
 const dataContextDefaultValues: DataState = {
@@ -35,7 +36,8 @@ const dataContextDefaultValues: DataState = {
   NETWORKS: {},
   switchEthereumChain: () => {},
   showalert: false,
-  web3NetworkId: ""
+  web3NetworkId: "",
+  onLogin: () => {}
 }
 export const DataContext = createContext<DataState>(dataContextDefaultValues);
 

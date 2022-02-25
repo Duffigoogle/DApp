@@ -3,7 +3,6 @@ import React from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useState, useContext } from 'react';
-import Header from '../components/Header'
 import styles from '../styles/Home.module.css'
 import LogoDAPP from "./../public/assets/Dapp.svg"
 import Layout from '../components/Layout'

@@ -8,12 +8,13 @@ import LogoDAPP from "./../public/assets/Dapp.svg"
 import Layout from '../components/Layout'
 import { DataContext } from '../context/Context';
 
-const Home: NextPage = () => {
+const Home: NextPage = (networkId) => {
 
-  const {web3Account, getBalance, balance, switchEthereumChain, showalert} = useContext(DataContext)
+  const {web3Account, getBalance, balance, switchEthereumChain, popAlert, readValues} = useContext(DataContext)
 
-  const disConnectWallet = () => {
-      
+  const getTotalSuppy = () => {
+    readValues();
+    console.log("Wahala");
   }
 
   return (
@@ -22,17 +23,17 @@ const Home: NextPage = () => {
     
           <section className=''>
             <div className='flex justify-between'>
-              {showalert && (
+            {popAlert && (
 
               <div className='bg-red-900 flex justify-between items-center px-12 w-full flex-wrap'>
-                <p className='text-sm text-white font-medium text-wrap'> App network (Etheruem) doesn't match to network selected in wallet. Network with id: `${}`
+                <p className='text-sm text-white font-medium text-wrap'> `App network (Etheruem) doesn't match to network selected in wallet. Network with id: ${networkId}`
                 </p>
                 <button onClick={switchEthereumChain}
                 className="rounded-lg my-2 px-2  bg-white hover:bg-slate-100 text-sm text-amber-700 hover:text-amber-900 min-w-fit">
                 Change Network
                 </button>
               </div>
-              )}
+            )}
 
               {/* <button onClick={disConnectWallet}
                 className="rounded-lg mt-2 mr-8 px-4 py-2 bg-orange-700 hover:bg-orange-600 text-cyan-100">
@@ -48,7 +49,7 @@ const Home: NextPage = () => {
                 Provides a network for all your needs with ease and fun using DAPPAsockets. Discover interesting features from us.
               </p>
              
-              <button className="cursor-pointer   bg-amber-600 rounded-md px-10 py-3 my-9" onClick={getBalance} disabled={!web3Account}> Get Balance 
+              <button className="cursor-pointer   bg-amber-600 rounded-md px-10 py-3 my-9" onClick={getTotalSuppy} > Get Balance 
               </button>
               
               <p className="pb-5">Balance: {balance}</p>

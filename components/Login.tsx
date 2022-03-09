@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Web3 from "web3";
 import WalletModal from "./modal";
-import ABI from "./../utils/WavePortal.json";
+// import ABI from "./../utils/WavePortal.json";
 import detectEthereumProvider from '@metamask/detect-provider';
 import { useContext } from 'react';
 import { DataContext } from "../context/Context";

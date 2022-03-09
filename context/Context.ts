@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
 
 interface DataState {
-  balance?: string | null;
+  balance?: string | number;
   getBalance?: any;
+  readValues: any;
   setIsConnected: any;
   isConnected : boolean;
   web3Account? : string;
@@ -15,15 +16,16 @@ interface DataState {
   setShowWalletModal: any;
   NETWORKS: any;
   switchEthereumChain: any;
-  showalert: boolean;
+  popAlert: boolean;
   web3NetworkId: number | string,
-  onLogin: any
+  onLogin: any,
 }
 
 const dataContextDefaultValues: DataState = {
   web3Account: "",
-  balance: null,
+  balance: "",
   getBalance: () => {},
+  readValues: () => {},
   setIsConnected: () => {},
   isConnected : false,
   setWeb3Account : () => {},  
@@ -35,7 +37,7 @@ const dataContextDefaultValues: DataState = {
   setShowWalletModal: () => {},
   NETWORKS: {},
   switchEthereumChain: () => {},
-  showalert: false,
+  popAlert: false,
   web3NetworkId: "",
   onLogin: () => {}
 }
